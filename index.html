@@ -205,18 +205,36 @@ function render(){
  hydrate();
 }
 document.getElementById("q").addEventListener("input",render);
-/* ---------- Скины: полный рост, лицензия (Mojang), slim/classic, плащи ---------- */
+
+/* ---------- Скины без бэкенда: Mojang (лицензия) -> Ely.by -> Steve ---------- */
 var SK={},SV_URL="https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/bundles/skinview3d.bundle.js";
+var STEVE="https://textures.minecraft.net/texture/60a5bd016b3c9a1b9272e4929e30827a67be4ebb219017adbbc4a4d22ebd5b";
+function getJSON(u){return fetch(u).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})}
+function fetchSkin(name){
+ return getJSON("https://api.ashcon.app/mojang/v2/user/"+encodeURIComponent(name)).then(function(j){
+  var t=j.textures||{};
+  if(!t.skin||!t.skin.url)throw new Error("no mojang skin");
+  return{name:j.username,uuid:(j.uuid||"").replace(/-/g,""),skin:t.skin.url,model:t.slim?"slim":"default",
+   cape:t.cape?t.cape.url:null,source:"mojang",licensed:true,customSkin:!!t.custom};
+ }).catch(function(){
+  return getJSON("https://skinsystem.ely.by/textures/"+encodeURIComponent(name)).then(function(j){
+   if(!j||!j.SKIN||!j.SKIN.url)throw new Error("no ely");
+   return{name:name,uuid:"",skin:j.SKIN.url,model:(j.SKIN.metadata&&j.SKIN.metadata.model==="slim")?"slim":"default",
+    cape:j.CAPE?j.CAPE.url:null,source:"elyby",licensed:false,customSkin:true};
+  });
+ }).catch(function(){
+  return{name:name,uuid:"",skin:STEVE,model:"default",cape:null,source:"none",licensed:false,customSkin:false};
+ });
+}
 function skinData(name){
- var k=name.toLowerCase(),c=SK[k]||(SK[k]={});
- var LS="skin:"+k;
+ var k=name.toLowerCase(),c=SK[k]||(SK[k]={}),LS="skin2:"+k;
  if(!c.req){try{var st=JSON.parse(localStorage.getItem(LS));if(st&&st.t>Date.now()-6*36e5&&st.d.skin){c.data=st.d;c.req=Promise.resolve(st.d)}}catch(e){}}
- if(!c.req)c.req=fetch("/api/skin/"+encodeURIComponent(name)).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
-  .then(function(d){if(!d.skin)throw new Error("no skin");c.data=d;try{localStorage.setItem(LS,JSON.stringify({t:Date.now(),d:d}))}catch(e){}return d})
-  .catch(function(e){c.req=null;throw e});
+ if(!c.req)c.req=fetchSkin(name).then(function(d){
+  c.data=d;try{localStorage.setItem(LS,JSON.stringify({t:Date.now(),d:d}))}catch(e){}return d;
+ }).catch(function(e){c.req=null;throw e});
  return c.req;
 }
-function loadImg(src){return new Promise(function(ok,no){var i=new Image();i.onload=function(){ok(i)};i.onerror=no;i.src=src})}
+function loadImg(src){return new Promise(function(ok,no){var i=new Image();i.crossOrigin="anonymous";i.onload=function(){ok(i)};i.onerror=no;i.src=src})}
 var svReady;
 function loadSV(){
  if(window.skinview3d)return Promise.resolve(window.skinview3d);
@@ -227,7 +245,6 @@ function loadSV(){
  });
  return svReady;
 }
-/* Плоский рендер в полный рост (запасной вариант без WebGL): поддержка 64x64, старых 64x32, HD и slim-рук */
 function flatRender(d){return loadImg(d.skin).then(function(img){
  var s=img.width/64,legacy=img.height*2===img.width,aw=d.model==="slim"?3:4,K=8;
  var src=document.createElement("canvas");src.width=img.width;src.height=img.height;var sx=src.getContext("2d");sx.drawImage(img,0,0);
@@ -245,7 +262,6 @@ function flatRender(d){return loadImg(d.skin).then(function(img){
  O.forEach(function(a){part(a[0],a[1],a[2],a[3],a[4],a[5],0,1)});
  return o.toDataURL();
 })}
-/* 3D-снимок в полный рост: один WebGL-контекст на все иконки, рендер по очереди */
 var snapV,snapQ=Promise.resolve();
 function snapRender(d){
  var job=snapQ.then(function(){return loadSV()}).then(function(sv){
@@ -261,7 +277,7 @@ function snapRender(d){
  snapQ=job.catch(function(){});return job;
 }
 function setIcon(name,url){
- var k=name.toLowerCase(),c=SK[k];c.icon=url;
+ var k=name.toLowerCase(),c=SK[k]||(SK[k]={});c.icon=url;
  document.querySelectorAll('.av[data-n]').forEach(function(el){
   if(el.dataset.n.toLowerCase()!==k)return;
   el.innerHTML='<img src="'+url+'" alt="">'+(c.data&&c.data.licensed?'<i class="lic" title="Лицензионный аккаунт">✓</i>':'');
@@ -271,15 +287,29 @@ function setIcon(name,url){
 function ensureIcon(name){
  var c=SK[name.toLowerCase()]||(SK[name.toLowerCase()]={});
  if(c.icon||c.busy)return;c.busy=true;
+ function fallback(){
+  if(c.icon)return;
+  var u="https://mc-heads.net/body/"+encodeURIComponent(name)+"/120";
+  var i=new Image();
+  i.onload=function(){if(!c.icon)setIcon(name,u)};
+  i.onerror=function(){
+   var u2="https://minotar.net/armor/body/"+encodeURIComponent(name)+"/120.png";
+   var j=new Image();j.onload=function(){if(!c.icon)setIcon(name,u2)};j.src=u2;
+  };
+  i.src=u;
+ }
  skinData(name).then(function(d){
-  return flatRender(d).then(function(u){if(!c.is3d)setIcon(name,u)}).catch(function(){})
-   .then(function(){return snapRender(d)}).then(function(u){c.is3d=true;setIcon(name,u)}).catch(function(){});
- }).catch(function(){c.tries=(c.tries||0)+1;if(c.tries<4)setTimeout(function(){ensureIcon(name)},4000*c.tries);document.querySelectorAll('.av.ld').forEach(function(el){if(el.dataset.n.toLowerCase()===name.toLowerCase())el.classList.remove("ld")})})
- .then(function(){c.busy=false});
+  return flatRender(d).then(function(u){if(!c.is3d)setIcon(name,u)}).catch(function(e){console.warn("flat",name,e)})
+   .then(function(){return snapRender(d)}).then(function(u){c.is3d=true;setIcon(name,u)}).catch(function(e){console.warn("3d",name,e)});
+ }).catch(function(e){console.warn("skinData",name,e)})
+ .then(function(){
+  if(!c.icon)fallback();
+  c.busy=false;
+  document.querySelectorAll('.av.ld').forEach(function(el){if(el.dataset.n.toLowerCase()===name.toLowerCase())el.classList.remove("ld")});
+ });
 }
 function hydrate(){list.querySelectorAll(".av:not(.ok)").forEach(function(el){ensureIcon(el.dataset.n)})}
 
-/* Интерактивный 3D-просмотр скина */
 var dlg=document.getElementById("dlg"),bigV,walkA;
 function openSkin(name){
  document.getElementById("dlgT").textContent=name;
@@ -295,7 +325,7 @@ function openSkin(name){
   document.getElementById("dlgM").innerHTML=src+'<span>Модель: '+(d.model==="slim"?"Slim (Alex, 3px)":"Classic (Steve, 4px)")+'</span><span>Плащ: '+(d.cape?"есть":"нет")+'</span>'+(d.source==="mojang"&&!d.customSkin?'<span>Скин по умолчанию</span>':"");
   var ctl='<button class="btn g" data-a="walk" aria-pressed="true">Ходьба</button><button class="btn g" data-a="rot" aria-pressed="false">Вращение</button>';
   if(d.cape)ctl+='<button class="btn g" data-a="ely" aria-pressed="false">Элитры</button>';
-  ctl+='<a class="btn g" download="'+esc(d.name||name)+'.png" href="'+d.skin+'">Скачать скин</a>';
+  ctl+='<a class="btn g" target="_blank" rel="noopener" href="'+d.skin+'">Открыть скин</a>';
   if(d.source==="mojang")ctl+='<a class="btn g" target="_blank" rel="noopener" href="https://namemc.com/profile/'+encodeURIComponent(d.name||name)+'">NameMC</a>';
   document.getElementById("dlgC").innerHTML=ctl;
   return loadSV().then(function(sv){
@@ -305,7 +335,8 @@ function openSkin(name){
    bigV.playerObject.backEquipment="cape";
    return bigV.loadSkin(d.skin,{model:d.model==="slim"?"slim":"default"}).then(function(){return d.cape?bigV.loadCape(d.cape):bigV.resetCape()});
   }).catch(function(){
-   return flatRender(d).then(function(u){stage.innerHTML='<img src="'+u+'" alt="Скин '+esc(name)+'" style="height:360px;image-rendering:pixelated">'});
+   return flatRender(d).then(function(u){stage.innerHTML='<img src="'+u+'" alt="Скин '+esc(name)+'" style="height:360px;image-rendering:pixelated">'})
+    .catch(function(){stage.innerHTML='<img src="https://mc-heads.net/body/'+encodeURIComponent(name)+'/300" alt="" style="height:360px;image-rendering:pixelated">'});
   });
  }).catch(function(){document.getElementById("dlgM").innerHTML='<span>Не удалось загрузить скин. Попробуйте позже.</span>'});
 }
