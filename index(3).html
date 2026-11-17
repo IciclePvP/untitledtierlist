@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UntitledTierslist</title>
+<style>
+:root{--bg:#080a12;--panel:#0e111c;--row:#111523;--line:#1b2033;--text:#eef0f8;--mut:#8b93b3;--acc:#fde047;--accfg:#1a1500;
+--S:#facc15;--A:#c084fc;--B:#60a5fa;--C:#4ade80;--D:#fb923c;--F:#7b8099;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f6f7fb;--panel:#fff;--row:#fff;--line:#e2e5f0;--text:#12152a;--mut:#5b6283;--acc:#facc15;--accfg:#1a1500;--S:#a16207;--A:#7e22ce;--B:#1d4ed8;--C:#15803d;--D:#c2410c;--F:#5b6283}}
+:root[data-theme="dark"]{--bg:#080a12}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.logo{font-weight:800;letter-spacing:.14em;font-size:15px;display:flex;align-items:center;gap:10px}
+.logo i{font-style:normal;font-size:20px}
+nav{display:flex;gap:22px;align-items:center;color:var(--mut);font-size:14px}
+nav a{color:inherit;text-decoration:none}nav a:hover{color:var(--text)}
+.hero{text-align:center;padding:72px 0 48px}
+.hero small{color:var(--acc);letter-spacing:.2em;font-size:13px}
+h1{font-size:clamp(34px,6vw,60px);line-height:1.08;margin:14px auto 18px;font-weight:600;max-width:800px}
+.hero p{color:var(--mut);max-width:620px;margin:0 auto 30px;font-size:18px}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{border:0;border-radius:12px;padding:15px 26px;font:600 15px inherit;font-family:inherit;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.y{background:var(--acc);color:var(--accfg)}.btn.g{background:var(--row);color:var(--text);border:1px solid var(--line)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:6px;overflow-x:auto}
+.tab{flex:1;min-width:110px;background:none;border:0;border-bottom:3px solid transparent;color:var(--mut);padding:14px 10px;font:500 15px inherit;font-family:inherit;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+.tab b{font-size:20px;font-weight:400}
+.tab[aria-selected=true]{background:var(--row);color:var(--text);border-bottom-color:var(--acc)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin:34px 0 8px}
+h2{margin:0;font-size:26px;font-weight:600}
+.sub{color:var(--mut);font-size:14px;margin:0 0 16px}
+.search{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:11px 14px;font:inherit;width:240px;max-width:100%}
+.cols{display:grid;grid-template-columns:70px 1fr auto;gap:16px;padding:10px 18px;color:var(--mut);font-size:13px}
+.list{display:flex;flex-direction:column;gap:10px}
+.row{display:grid;grid-template-columns:70px 1fr auto;gap:16px;align-items:center;background:var(--row);border:1px solid var(--line);border-radius:16px;padding:12px 18px}
+.rank{font-size:26px;font-weight:800;font-style:italic;width:56px;height:56px;border-radius:12px;display:grid;place-items:center;background:var(--panel);color:var(--mut)}
+.r1{background:linear-gradient(135deg,#facc15,#a16207);color:#1a1500}
+.r2{background:linear-gradient(135deg,#7dd3fc,#2563eb);color:#04132e}
+.r3{background:linear-gradient(135deg,#fdba74,#c2410c);color:#2a1000}
+.who{display:flex;align-items:center;gap:14px;min-width:0}
+.av{width:60px;height:108px;border-radius:12px;display:grid;place-items:center;font:700 20px inherit;font-family:inherit;color:#fff;flex:none;position:relative;overflow:hidden;border:1px solid var(--line);padding:0;cursor:pointer;background:radial-gradient(120% 70% at 50% 100%,rgba(255,255,255,.16),transparent 70%),var(--bgc,#334);transition:transform .15s}
+.av:hover{transform:translateY(-2px)}.av.ok{background:radial-gradient(120% 60% at 50% 100%,rgba(253,224,71,.18),transparent 70%),var(--panel)}
+.av img{position:absolute;inset:4px 2px;width:calc(100% - 4px);height:calc(100% - 8px);object-fit:contain;display:block;image-rendering:pixelated}
+.av .lic{position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#22c55e;color:#03210f;font:800 10px/16px inherit;font-family:inherit;font-style:normal;text-align:center;z-index:1}
+.av.ld span{animation:pulse 1.2s ease-in-out infinite}@keyframes pulse{50%{opacity:.35}}
+dialog.skin{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:20px;padding:0;width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px)}
+dialog.skin::backdrop{background:rgba(4,6,12,.7);backdrop-filter:blur(4px)}
+.sk-top{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 0}.sk-top h3{margin:0;font-size:20px}
+.x{background:none;border:0;color:var(--mut);font-size:26px;line-height:1;cursor:pointer;padding:4px 8px}
+.stage{display:grid;place-items:center;height:400px;margin:6px 0;background:radial-gradient(60% 40% at 50% 88%,rgba(253,224,71,.14),transparent 70%)}
+.stage canvas{cursor:grab;touch-action:none}
+.meta{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px}.meta span{font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}.meta .good{color:#22c55e;border-color:rgba(34,197,94,.4)}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;padding:14px 18px 18px}.ctl .btn{padding:9px 14px;font-size:14px;border-radius:10px}
+.ctl .btn[aria-pressed=true]{border-color:var(--acc);color:var(--acc)}
+.uuid{padding:6px 18px 0;color:var(--mut);font-size:12px;font-family:ui-monospace,monospace;word-break:break-all}
+.nm{font-size:19px;font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.pts{color:var(--mut);font-size:14px}
+.chips{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.chip{display:flex;flex-direction:column;align-items:center;gap:5px}
+.ico{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:20px}
+.t{font-weight:700;font-size:13px;padding:2px 10px;border-radius:999px;background:var(--panel);border:1px solid var(--line)}
+.big{font-size:18px;padding:6px 18px}
+.tS{color:var(--S)}.tA{color:var(--A)}.tB{color:var(--B)}.tC{color:var(--C)}.tD{color:var(--D)}.tF,.tN{color:var(--F)}
+.empty{text-align:center;color:var(--mut);padding:36px 0}
+.kits{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+.kit{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:14px}.kit span{color:var(--mut)}
+section.info{margin:72px 0 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:20px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+.card h3{margin:0 0 10px;font-size:18px}.card p,.card li{color:var(--mut);margin:6px 0}
+table{width:100%;border-collapse:collapse;font-size:15px}td,th{text-align:left;padding:7px 0;border-bottom:1px solid var(--line)}th{color:var(--mut);font-weight:500}
+footer{border-top:1px solid var(--line);color:var(--mut);font-size:14px;padding:26px 0}
+@media (max-width:760px){nav .hide{display:none}.row{grid-template-columns:56px 1fr}.cols{display:none}.chips{grid-column:1/-1;justify-content:flex-start}.rank{width:46px;height:46px;font-size:20px}.av{width:52px;height:94px}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+<div class="logo"><i>🏆</i>UNTITLEDTIERSLIST</div>
+<nav><a href="#rules">Правила</a><a href="#points" class="hide">Очки</a><a href="#top">Рейтинг</a></nav>
+</div></header>
+
+<main class="wrap" id="top">
+<div class="hero">
+<small>UNTITLEDTIERSLIST</small>
+<h1>Тир-лист игроков Minecraft</h1>
+<p>Сражайтесь в четырёх специализациях и двенадцати режимах, получайте тиры и поднимайтесь в общем рейтинге.</p>
+<div class="btns"><a class="btn y" href="#rules">Пройти тир-тест</a><a class="btn g" href="#points">Как считаются очки</a></div>
+</div>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+<div class="head"><h2 id="ttl"></h2><input class="search" id="q" type="search" placeholder="Поиск игрока" aria-label="Поиск игрока"></div>
+<p class="sub" id="sub"></p>
+<div class="kits" id="kits"></div>
+<div class="cols"><span>#</span><span>Игрок</span><span id="colh">Тиры</span></div>
+<div class="list" id="list"></div>
+
+<section class="info" id="rules">
+<h2>Правила повышения тира</h2>
+<div class="grid">
+<div class="card"><h3>Как получить (+)</h3><p>Выиграйте 2 из 3 режимов против игрока вашего тира.</p></div>
+<div class="card"><h3>Как повысить тир</h3><p>Выиграйте 2 из 3 режимов против игрока выше вашего тира.</p></div>
+<div class="card"><h3>Как потерять тир</h3><p>Проиграйте все 3 режима игроку вашего тира без (+): вы понизитесь в тире. Если (+) есть, вы потеряете его.</p></div>
+</div>
+</section>
+
+<section class="info" id="points" style="margin-top:0">
+<h2>Очки</h2>
+<div class="grid">
+<div class="card"><h3>Очки за подтир в специализации</h3>
+<table><tr><th>Тир</th><th>Очки</th></tr><tr><td class="tS">S</td><td>11</td></tr><tr><td class="tA">A</td><td>8</td></tr><tr><td class="tB">B</td><td>6</td></tr><tr><td class="tC">C</td><td>4</td></tr><tr><td class="tD">D</td><td>2</td></tr></table>
+<p>Плюс к любому подтиру даёт +1 очко.</p></div>
+<div class="card"><h3>Очки для общего тира</h3>
+<table><tr><th>Тир</th><th>Очки</th></tr><tr><td class="tS">S</td><td>38</td></tr><tr><td class="tA">A</td><td>30</td></tr><tr><td class="tB">B</td><td>21</td></tr><tr><td class="tC">C</td><td>14</td></tr><tr><td class="tD">D</td><td>8</td></tr></table>
+<p>Общий тир складывается из очков за подтиры во всех четырёх специализациях.</p></div>
+</div>
+</section>
+</main>
+<dialog class="skin" id="dlg" aria-labelledby="dlgT">
+<div class="sk-top"><h3 id="dlgT"></h3><button class="x" id="dlgX" aria-label="Закрыть">×</button></div>
+<div class="uuid" id="dlgU"></div>
+<div class="stage" id="stage"></div>
+<div class="meta" id="dlgM"></div>
+<div class="ctl" id="dlgC"></div>
+</dialog>
+<footer><div class="wrap">UntitledTierslist — тир-лист игроков Untitled Tiered</div></footer>
+
+<script>
+var SPECS={
+ sword:{n:"Sword",ru:"Меч",ic:"⚔️",desc:"Дуэли на мечах.",kits:[["Beast","FT10"],["Diamond","FT4"],["Netherite","FT4"]]},
+ shield:{n:"Shield",ru:"Щит",ic:"🛡️",desc:"Дуэли с использованием щита.",kits:[["Axe","FT10"],["SMP","FT4"],["UHC","FT4"]]},
+ tech:{n:"Technical",ru:"Другие",ic:"⚙️",desc:"Другие мощные оружия, требующие более продвинутых техник.",kits:[["Mace","FT3"],["Spear","FT3"],["Cart","FT3"]]},
+ mini:{n:"Minigame",ru:"Мини-игры",ic:"🎮",desc:"Дуэли в мини-играх.",kits:[["Fireball Fight","FT4"],["Stick Fight","FT20 RW"],["The Bridge","FT20 RW"]]}
+};
+var BASE={S:11,A:8,B:6,C:4,D:2};
+var P=[
+["Thuyria","S",44,"S","S","S","S"],
+["Yurches","A",35,"A+","A+","A+","A"],
+["Karaid","A",30,"B","S","B","B+"],
+["Miki_tiki313","B+",26,"B","B","C+","A+"],
+["wagabagabobo","B",23,"A","A","B+","N/A"],
+["SuperGroza","B",21,"B+","A","B","N/A"],
+["Smocky","C",20,"C+","C+","C","B"],
+["AleHiros","C",19,"B","B","B+","N/A"],
+["RedstoneMoss","D",9,"D+","C","D","N/A"],
+["ytochan","D",9,"D+","D+","D+","N/A"],
+["Acrobat","F",2,"N/A","D","N/A","N/A"],
+["ne_bro_sasha","F",-67,"F","F","F","F"]
+].map(function(a){return{name:a[0],tier:a[1],pts:a[2],shield:a[3],sword:a[4],tech:a[5],mini:a[6]}});
+var COLORS=["#6d28d9","#be185d","#0f766e","#b45309","#1d4ed8","#4d7c0f","#9f1239","#0e7490"];
+var cur="overall",tabs=document.getElementById("tabs"),list=document.getElementById("list");
+
+function sp(t){if(!t||t==="N/A")return 0;return(BASE[t[0]]||0)+(t.indexOf("+")>-1?1:0)}
+function badge(t,cls){var k=t==="N/A"?"N":t[0];return '<span class="t '+(cls||"")+' t'+k+'">'+(t==="N/A"?"—":t)+'</span>'}
+function avatar(p){
+ var c=SK[p.name.toLowerCase()]||{},img=c.icon?'<img src="'+c.icon+'" alt="">':'<span>'+esc(p.name.charAt(0).toUpperCase())+'</span>';
+ return '<button class="av'+(c.icon?' ok':' ld')+'" style="--bgc:'+COLORS[p.name.length%COLORS.length]+'" data-n="'+esc(p.name)+'" title="Скин '+esc(p.name)+' в 3D" aria-label="Открыть скин '+esc(p.name)+' в 3D">'+img+(c.data&&c.data.licensed?'<i class="lic" title="Лицензионный аккаунт">✓</i>':'')+'</button>'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function buildTabs(){
+ var h='<button class="tab" role="tab" data-k="overall"><b>🏆</b>Overall</button>';
+ for(var k in SPECS)h+='<button class="tab" role="tab" data-k="'+k+'"><b>'+SPECS[k].ic+'</b>'+SPECS[k].n+'</button>';
+ tabs.innerHTML=h;
+ tabs.onclick=function(e){var b=e.target.closest(".tab");if(b){cur=b.dataset.k;render()}};
+}
+function rankCls(i){return i<3?" r"+(i+1):""}
+function render(){
+ var q=document.getElementById("q").value.trim().toLowerCase();
+ Array.prototype.forEach.call(tabs.children,function(b){b.setAttribute("aria-selected",b.dataset.k===cur)});
+ var rows,s=SPECS[cur];
+ if(cur==="overall"){
+  document.getElementById("ttl").textContent="Overall";
+  document.getElementById("sub").textContent="Общий рейтинг по сумме очков за подтиры в Sword, Shield, Technical и Minigame.";
+  document.getElementById("colh").textContent="Тиры";
+  document.getElementById("kits").innerHTML="";
+  rows=P.slice();
+ }else{
+  document.getElementById("ttl").textContent=s.n+" ("+s.ru+")";
+  document.getElementById("sub").textContent=s.desc+" Киты специализации:";
+  document.getElementById("colh").textContent="Подтир";
+  document.getElementById("kits").innerHTML=s.kits.map(function(k){return '<div class="kit">'+k[0]+' <span>'+k[1]+'</span></div>'}).join("");
+  rows=P.slice().sort(function(a,b){return sp(b[cur])-sp(a[cur])||b.pts-a.pts});
+ }
+ var html="";
+ rows.forEach(function(p,i){
+  if(q&&p.name.toLowerCase().indexOf(q)<0)return;
+  var right="";
+  if(cur==="overall"){
+   right='<div class="chips">'+["sword","shield","tech","mini"].map(function(k){
+    return '<div class="chip" title="'+SPECS[k].n+'"><div class="ico">'+SPECS[k].ic+'</div>'+badge(p[k])+'</div>'}).join("")+
+    '<div class="chip" title="Общий тир"><div class="ico">🏆</div>'+badge(p.tier)+'</div></div>';
+  }else{
+   right='<div class="chips">'+badge(p[cur],"big")+'</div>';
+  }
+  var pts=cur==="overall"?p.pts:sp(p[cur]);
+  var word=pts%10===1&&pts!==11?"очко":(pts%10>1&&pts%10<5&&(pts<12||pts>14)?"очка":"очков");
+  html+='<div class="row"><div class="rank'+rankCls(i)+'">'+(i+1)+'.</div><div class="who">'+avatar(p)+'<div style="min-width:0"><div class="nm">'+esc(p.name)+'</div><div class="pts">'+pts+' '+word+'</div></div></div>'+right+'</div>';
+ });
+ list.innerHTML=html||'<div class="empty">Игрок не найден. Проверьте ник и попробуйте снова.</div>';
+ hydrate();
+}
+document.getElementById("q").addEventListener("input",render);
+/* ---------- Скины: полный рост, лицензия (Mojang), slim/classic, плащи ---------- */
+var SK={},SV_URL="https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/bundles/skinview3d.bundle.js";
+function skinData(name){
+ var k=name.toLowerCase(),c=SK[k]||(SK[k]={});
+ var LS="skin:"+k;
+ if(!c.req){try{var st=JSON.parse(localStorage.getItem(LS));if(st&&st.t>Date.now()-6*36e5&&st.d.skin){c.data=st.d;c.req=Promise.resolve(st.d)}}catch(e){}}
+ if(!c.req)c.req=fetch("/api/skin/"+encodeURIComponent(name)).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+  .then(function(d){if(!d.skin)throw new Error("no skin");c.data=d;try{localStorage.setItem(LS,JSON.stringify({t:Date.now(),d:d}))}catch(e){}return d})
+  .catch(function(e){c.req=null;throw e});
+ return c.req;
+}
+function loadImg(src){return new Promise(function(ok,no){var i=new Image();i.onload=function(){ok(i)};i.onerror=no;i.src=src})}
+var svReady;
+function loadSV(){
+ if(window.skinview3d)return Promise.resolve(window.skinview3d);
+ if(!svReady)svReady=new Promise(function(ok,no){
+  var t=document.createElement("canvas");if(!(t.getContext("webgl2")||t.getContext("webgl")))return no(new Error("no webgl"));
+  var s=document.createElement("script");s.src=SV_URL;s.async=true;s.onload=function(){window.skinview3d?ok(window.skinview3d):no()};s.onerror=function(){svReady=null;no(new Error("cdn"))};
+  document.head.appendChild(s);setTimeout(function(){no(new Error("timeout"))},12000);
+ });
+ return svReady;
+}
+/* Плоский рендер в полный рост (запасной вариант без WebGL): поддержка 64x64, старых 64x32, HD и slim-рук */
+function flatRender(d){return loadImg(d.skin).then(function(img){
+ var s=img.width/64,legacy=img.height*2===img.width,aw=d.model==="slim"?3:4,K=8;
+ var src=document.createElement("canvas");src.width=img.width;src.height=img.height;var sx=src.getContext("2d");sx.drawImage(img,0,0);
+ if(legacy){var hd=sx.getImageData(32*s,0,32*s,16*s).data,tr=false;for(var i=3;i<hd.length;i+=4)if(hd[i]<128){tr=true;break}if(!tr)sx.clearRect(32*s,0,32*s,16*s)}
+ var o=document.createElement("canvas");o.width=17*K;o.height=33*K;var x=o.getContext("2d");x.imageSmoothingEnabled=false;x.translate(K/2,K/2);
+ function part(u,v,w,h,dx,dy,flip,grow){
+  var g=grow?K*.5:0,X=dx*K-g,Y=dy*K-g,W=w*K+2*g,H=h*K+2*g;
+  x.save();if(flip){x.translate(X+W,Y);x.scale(-1,1);X=0;Y=0}
+  x.drawImage(src,u*s,v*s,w*s,h*s,X,Y,W,H);x.restore();
+ }
+ var L=[[8,8,8,8,4,0],[20,20,8,12,4,8],[44,20,aw,12,4-aw,8],[4,20,4,12,4,20]];
+ var R=legacy?[[44,20,aw,12,12,8,1],[4,20,4,12,8,20,1]]:[[36,52,aw,12,12,8],[20,52,4,12,8,20]];
+ var O=legacy?[[40,8,8,8,4,0]]:[[40,8,8,8,4,0],[20,36,8,12,4,8],[44,36,aw,12,4-aw,8],[52,52,aw,12,12,8],[4,36,4,12,4,20],[4,52,4,12,8,20]];
+ L.concat(R).forEach(function(a){part(a[0],a[1],a[2],a[3],a[4],a[5],a[6])});
+ O.forEach(function(a){part(a[0],a[1],a[2],a[3],a[4],a[5],0,1)});
+ return o.toDataURL();
+})}
+/* 3D-снимок в полный рост: один WebGL-контекст на все иконки, рендер по очереди */
+var snapV,snapQ=Promise.resolve();
+function snapRender(d){
+ var job=snapQ.then(function(){return loadSV()}).then(function(sv){
+  if(!snapV){snapV=new sv.SkinViewer({width:120,height:216,pixelRatio:2,preserveDrawingBuffer:true,renderPaused:true,enableControls:false,zoom:.86,fov:40});snapV.canvas.style.display="none"}
+  return snapV.loadSkin(d.skin,{model:d.model==="slim"?"slim":"default"}).then(function(){
+   if(d.cape)return snapV.loadCape(d.cape);snapV.resetCape();
+  }).then(function(){
+   var po=snapV.playerObject;po.rotation.y=.5;po.skin.leftArm.rotation.z=.08;po.skin.rightArm.rotation.z=-.08;
+   if(po.cape)po.cape.rotation.x=.2;
+   snapV.render();return snapV.canvas.toDataURL("image/png");
+  });
+ });
+ snapQ=job.catch(function(){});return job;
+}
+function setIcon(name,url){
+ var k=name.toLowerCase(),c=SK[k];c.icon=url;
+ document.querySelectorAll('.av[data-n]').forEach(function(el){
+  if(el.dataset.n.toLowerCase()!==k)return;
+  el.innerHTML='<img src="'+url+'" alt="">'+(c.data&&c.data.licensed?'<i class="lic" title="Лицензионный аккаунт">✓</i>':'');
+  el.classList.add("ok");el.classList.remove("ld");
+ });
+}
+function ensureIcon(name){
+ var c=SK[name.toLowerCase()]||(SK[name.toLowerCase()]={});
+ if(c.icon||c.busy)return;c.busy=true;
+ skinData(name).then(function(d){
+  return flatRender(d).then(function(u){if(!c.is3d)setIcon(name,u)}).catch(function(){})
+   .then(function(){return snapRender(d)}).then(function(u){c.is3d=true;setIcon(name,u)}).catch(function(){});
+ }).catch(function(){c.tries=(c.tries||0)+1;if(c.tries<4)setTimeout(function(){ensureIcon(name)},4000*c.tries);document.querySelectorAll('.av.ld').forEach(function(el){if(el.dataset.n.toLowerCase()===name.toLowerCase())el.classList.remove("ld")})})
+ .then(function(){c.busy=false});
+}
+function hydrate(){list.querySelectorAll(".av:not(.ok)").forEach(function(el){ensureIcon(el.dataset.n)})}
+
+/* Интерактивный 3D-просмотр скина */
+var dlg=document.getElementById("dlg"),bigV,walkA;
+function openSkin(name){
+ document.getElementById("dlgT").textContent=name;
+ document.getElementById("dlgU").textContent="";
+ document.getElementById("dlgM").innerHTML='<span>Загрузка скина…</span>';
+ document.getElementById("dlgC").innerHTML="";
+ var stage=document.getElementById("stage");
+ if(typeof dlg.showModal==="function")dlg.showModal();else dlg.setAttribute("open","");
+ skinData(name).then(function(d){
+  document.getElementById("dlgT").textContent=d.name||name;
+  document.getElementById("dlgU").textContent=d.uuid?"UUID: "+d.uuid.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/,"$1-$2-$3-$4-$5"):"";
+  var src=d.source==="mojang"?'<span class="good">✓ Лицензия Minecraft</span>':d.source==="elyby"?'<span>Ely.by</span>':'<span>Нет лицензии — стандартный скин</span>';
+  document.getElementById("dlgM").innerHTML=src+'<span>Модель: '+(d.model==="slim"?"Slim (Alex, 3px)":"Classic (Steve, 4px)")+'</span><span>Плащ: '+(d.cape?"есть":"нет")+'</span>'+(d.source==="mojang"&&!d.customSkin?'<span>Скин по умолчанию</span>':"");
+  var ctl='<button class="btn g" data-a="walk" aria-pressed="true">Ходьба</button><button class="btn g" data-a="rot" aria-pressed="false">Вращение</button>';
+  if(d.cape)ctl+='<button class="btn g" data-a="ely" aria-pressed="false">Элитры</button>';
+  ctl+='<a class="btn g" download="'+esc(d.name||name)+'.png" href="'+d.skin+'">Скачать скин</a>';
+  if(d.source==="mojang")ctl+='<a class="btn g" target="_blank" rel="noopener" href="https://namemc.com/profile/'+encodeURIComponent(d.name||name)+'">NameMC</a>';
+  document.getElementById("dlgC").innerHTML=ctl;
+  return loadSV().then(function(sv){
+   if(!bigV){bigV=new sv.SkinViewer({width:300,height:400,fov:45,zoom:.9});stage.innerHTML="";stage.appendChild(bigV.canvas)}
+   bigV.renderPaused=false;bigV.autoRotate=false;bigV.resetCameraPose();bigV.playerObject.rotation.y=.4;
+   walkA=new sv.WalkingAnimation();walkA.speed=.7;bigV.animation=walkA;
+   bigV.playerObject.backEquipment="cape";
+   return bigV.loadSkin(d.skin,{model:d.model==="slim"?"slim":"default"}).then(function(){return d.cape?bigV.loadCape(d.cape):bigV.resetCape()});
+  }).catch(function(){
+   return flatRender(d).then(function(u){stage.innerHTML='<img src="'+u+'" alt="Скин '+esc(name)+'" style="height:360px;image-rendering:pixelated">'});
+  });
+ }).catch(function(){document.getElementById("dlgM").innerHTML='<span>Не удалось загрузить скин. Попробуйте позже.</span>'});
+}
+function closeSkin(){if(bigV)bigV.renderPaused=true;if(dlg.open)dlg.close?dlg.close():dlg.removeAttribute("open")}
+document.getElementById("dlgX").onclick=closeSkin;
+dlg.addEventListener("close",function(){if(bigV)bigV.renderPaused=true});
+dlg.addEventListener("click",function(e){if(e.target===dlg)closeSkin()});
+document.getElementById("dlgC").addEventListener("click",function(e){
+ var b=e.target.closest("button[data-a]");if(!b||!bigV)return;var on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",on);
+ if(b.dataset.a==="walk")bigV.animation=on?walkA:null;
+ if(b.dataset.a==="rot")bigV.autoRotate=on;
+ if(b.dataset.a==="ely")bigV.playerObject.backEquipment=on?"elytra":"cape";
+});
+list.addEventListener("click",function(e){var a=e.target.closest(".av");if(a)openSkin(a.dataset.n)});
+buildTabs();render();
+</script>
+</body>
+</html>
